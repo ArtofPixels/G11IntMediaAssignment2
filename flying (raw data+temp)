@@ -1,0 +1,157 @@
+Table xy;
+Table windSpeed;
+Table windDirection;
+Table airTemperature;
+int index = 0;
+int windS = 0;
+int windD = 0;
+int airTemp = 0;
+int count = 0;
+int positionX = 0;
+int size = 5;
+int offsetY = 200;
+float birdX = 500; 
+float birdY = 100;
+float birdSpeed = 0.4;
+int buttonX = 600;
+int buttonY = 250;
+int buttonW = 50;
+int buttonH = 20;
+boolean displayRaw = false;
+int update = 0;
+int mouseCount = 0;
+
+Bird b1;
+
+int tableDay = 02;
+int tableMonth = 01;
+int tableYear = 2023;
+
+float randomStart = random(1, 1); //randomiser for the index starting point, editable
+//float randomHeight = random(20, 30); //randomiser for the circle height, editable (UNUSUABLE)
+int randomInt = (int)randomStart;
+
+void setup() {
+  size(700, 300);
+  // load the data for a humidity censor in csv format.
+  // reference link :
+  // https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2023-08-27T09:07:28.885&rToDate=2023-08-28T09:07:28.885&rFamily=weather&rSensor=WS#collapseFour
+  
+  xy = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear + "-" + tableMonth + "-" + tableDay + "T09:07:28.885&rToDate=2023-08-28T09:07:28.885&rFamily=weather&rSensor=WS#collapseFour", "csv");
+  windSpeed = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear +"-" + tableMonth +"-" + tableDay + "T22%3A58%3A56&rToDate=2023-09-30T22%3A57%3A43&rFamily=weather&rSensor=WS", "csv");
+  windDirection = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear +"-" + tableMonth +"-" + tableDay + "T22%3A58%3A56&rToDate=2023-09-30T22%3A57%3A43&rFamily=weather&rSensor=WD", "csv");
+  airTemperature = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear +"-" + tableMonth +"-" + tableDay + "T20%3A49%3A52&rToDate=2023-10-01T20%3A49%3A52&rFamily=weather&rSensor=AT", "csv");
+  index += randomInt;
+  background(0, 204, 255);
+  fill(0, 204, 0);
+  rect(0, 200, 700, 150);
+  b1 = new Bird(birdX, birdY);
+  
+  
+  
+}
+
+void draw() {
+    //background(0, 204, 255);
+    if (airTemp < width){
+      float y = airTemperature.getFloat(airTemp, 1);
+      background(y*6, y*5, 205);
+      println("Temp: " + y);
+      airTemp++;
+    }
+    fill(0, 204, 0);
+    rect(0, 200, 700, 150);
+    
+    
+    
+    //fill(255);
+    
+    /*if (displayRaw) {
+      printRawData();
+    }*/
+    //xy (humidty sensor) grass representation
+    //if (index < xy.getRowCount()) {
+    //  // read the 2nd column (the 1), and read the row based on index which increments each draw()
+    //  float y = xy.getFloat(index, 1); // index is the row, 1 is the column with the data.
+    //  fill(0, 153, 51);
+    //  ellipse (positionX,  y + offsetY, size, size - random(10, 50)); //random editable
+    //  positionX += 5;
+    //  index++;
+    //}
+    
+    //changed getRowIndex to width to reduce the amount of raw data being rendered off screen
+    if (windS < width){
+      float x = windSpeed.getFloat(windS, 1);
+      b1.move(x);
+      delay(100);
+      b1.display();
+      windS++;
+      println(x);
+    }
+    
+    
+    fill(255);
+    rect(buttonX, buttonY, buttonW, buttonH);
+    fill(0);
+    text("Update", buttonX+7, buttonY+13);
+    
+    
+    
+    
+    if (mousePressed)  {
+      if (mouseX>buttonX && mouseX <buttonX+buttonW && mouseY>buttonY && mouseY <buttonY+buttonH) {
+        println("Button pressed");
+      }
+      else
+      {
+       printRawData();
+      
+        }
+      }
+  }
+    
+    
+    
+    // Wind direction sensor cloud representation
+    
+
+
+
+
+void printRawData() {
+   text("Temperature: " + str(airTemperature.getFloat(airTemp, 1)), 50, 230); 
+   text("Wind Speed: " + str(windSpeed.getFloat(windS, 1)) + "km/h", 50, 250);
+   text("Wind Direction: " + str(windDirection.getFloat(windD, 1)), 50, 270);
+}
+
+/*void mouseClicked(){
+  tableDay++;
+  tableMonth++;
+  
+  loadNewTable();
+  update++;
+  
+  background(0, 204, 255);
+  fill(0, 204, 0);
+  rect(0, 200, 700, 150);
+ 
+}*/
+
+void loadNewTable() {
+  // Load the new data for the humidity sensor in csv format.
+  String xyUrl = "https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear + "-" + tableMonth + "-" + tableDay + "T09:07:28.885&rToDate=2023-08-28T09:07:28.885&rFamily=weather&rSensor=WS#collapseFour";
+  xy = loadTable(xyUrl, "csv");
+  
+  // Load the new data for wind speed and wind direction sensors
+  String windSpeedUrl = "https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear + "-" + tableMonth + "-" + tableDay + "T22%3A58%3A56&rToDate=2023-09-30T22%3A57%3A43&rFamily=weather&rSensor=WS";
+  windSpeed = loadTable(windSpeedUrl, "csv");
+  
+  String windDirectionUrl = "https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + tableYear + "-" + tableMonth + "-" + tableDay + "T22%3A58%3A56&rToDate=2023-09-30T22%3A57%3A43&rFamily=weather&rSensor=WD";
+  windDirection = loadTable(windDirectionUrl, "csv");
+  
+  // Reset the bird's X position to start outside on the right side
+  //b1.resetPosition(width, birdY); // Assuming 'width' is the canvas width
+  
+  // Reset other variables if needed
+  index = 0;
+}
