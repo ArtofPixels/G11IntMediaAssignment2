@@ -9,6 +9,9 @@ public class Bird {
   public void move(float speed) {
     x = x - speed;
     y = y + random(-2,2);
+    if(x<-200){
+       x = 700;
+    }
   }
   public void display(){
     pushMatrix(); // Save the current transformation matrix
@@ -39,9 +42,4 @@ public class Bird {
     circle(267, 162, 4);
     popMatrix(); // Restore the previous transformation matrix
     }
-    
-  public void resetPosition(float canvasWidth, float yPos) {
-    x = canvasWidth; // Set the X position to the canvas width
-    y = yPos; // Set the Y position
   }
-}
