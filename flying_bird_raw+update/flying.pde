@@ -26,7 +26,7 @@ boolean mouseIsHeld = false;
 
 Bird b1;
 
-int tableDay = 02;
+int tableDay = 29;
 int tableMonth = 01;
 int tableYear = 2023;
 
@@ -123,10 +123,18 @@ void mouseClicked() {
   // Check if the mouse button is pressed and cursor is over the button area
   if (mouseX > buttonX && mouseX < buttonX + buttonW && mouseY > buttonY && mouseY < buttonY + buttonH) {
     // Load new table data and reset relevant variables
-    tableDay++;
-    tableMonth++;
+    if (tableDay < 30){
+      tableDay++;
+    }
+    
+    else if (tableDay == 30){
+      tableDay = 1;
+      tableMonth++;
+    }
     loadNewTable();
     update++;
+    println("Table Day: " + tableDay);
+    println("Table Month: " + tableMonth);
     airTemp = 0; // Reset air temperature counter
     windS = 0;   // Reset wind speed counter
     windD = 0;   // Reset wind direction counter
